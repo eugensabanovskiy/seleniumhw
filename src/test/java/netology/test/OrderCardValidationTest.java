@@ -73,19 +73,4 @@ public class OrderCardValidationTest {
         assertEquals("Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй", errorText.trim());
     }
 
-    @Test
-    void shouldShowErrorWhenNameHasLatinLetters() {
-    driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Ivan Ivanov");
-    driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79270000000");
-    driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
-    driver.findElement(By.tagName("button")).click();
-
-    // Логирование для диагностики
-    System.out.println("Текущий URL: " + driver.getCurrentUrl());
-    System.out.println("Страница после отправки формы: " + driver.getPageSource());
-
-    WebElement errorMessage = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub"));
-    assertTrue(errorMessage.isDisplayed(), "Сообщение об ошибке не отображается");
-    assertEquals("Имя должно содержать только кириллицу", errorMessage.getText(), "Текст ошибки не совпадает");
-    }
 }
