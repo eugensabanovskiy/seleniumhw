@@ -1,10 +1,11 @@
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OrderCardValidationTest {
 
@@ -42,17 +43,6 @@ public class OrderCardValidationTest {
     }
 
     @Test
-    void shouldShowErrorWhenNameHasLatinLetters() {
-        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Ivan Ivanov");
-        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79270000000");
-        driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
-        driver.findElement(By.tagName("button")).click();
-
-        String errorText = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub")).getText();
-        assertEquals("Имя и Фамилия указаны неверно. Допустимы только русские буквы, пробелы и дефисы.", errorText.trim());
-    }
-
-    @Test
     void shouldShowErrorWhenPhoneIsEmpty() {
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иван Иванов");
         driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
@@ -81,5 +71,17 @@ public class OrderCardValidationTest {
 
         String errorText = driver.findElement(By.cssSelector("[data-test-id='agreement'].input_invalid .checkbox__text")).getText();
         assertEquals("Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй", errorText.trim());
+    }
+
+    @Test
+    void shouldShowErrorWhenNameHasLatinLetters() {
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Ivan Ivanov");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79270000000");
+        driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
+        driver.findElement(By.tagName("button")).click();
+
+        WebElement errorMessage = driver.findElement(By.cssSelector("[data-test-id='name'].input_invalid .input__sub"));
+        assertTrue(errorMessage.isDisplayed(), "Сообщение об ошибке не отображается");
+        assertEquals("Имя должно содержать только кириллицу", errorMessage.getText(), "Текст ошибки не совпадает");
     }
 }
